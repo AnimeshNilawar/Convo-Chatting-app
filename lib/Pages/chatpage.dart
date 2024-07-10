@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conversation/service/database.dart';
 import 'package:conversation/service/shared_pref.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -16,7 +17,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   TextEditingController messageController = new TextEditingController();
-  String? myName, myProfilePic, myUserName, myEmail, messageId;
+  String? myName, myProfilePic, myUserName, myEmail, messageId, chatRoomId;
 
   getTheSharedPref() async {
     myName = await SharedPreferenceHelper().getUserDisplayName();
@@ -24,6 +25,7 @@ class _ChatPageState extends State<ChatPage> {
     myUserName = await SharedPreferenceHelper().getUserName();
     myEmail = await SharedPreferenceHelper().getUserEmail();
 
+    chatRoomId = getChatRoomIdByUsername(widget.username, myUserName!);
     setState(() {
 
     });
@@ -42,6 +44,13 @@ class _ChatPageState extends State<ChatPage> {
     onTheLoad();
   }
 
+  getChatRoomIdByUsername(String a, String b){
+    if(a.substring(0,1).codeUnitAt(0)> b.substring(0,1).codeUnitAt(0)){
+      return "$b\_$a";
+    }else{
+      return "$a\_$b";
+    }
+  }
 
   addMessage(bool sendClicked) {
     if (messageController.text != "") {
@@ -56,9 +65,21 @@ class _ChatPageState extends State<ChatPage> {
         "time": FieldValue.serverTimestamp(),
         "imgUrl": myProfilePic,
       };
-      if(messageId == ""){
-        messageId = randomAlphaNumeric(10);
-      }
+      messageId ??= randomAlphaNumeric(10);
+
+      DatabaseMethods().addMessage(chatRoomId!, messageId!, messageInfoMap).then((value) {
+        Map<String, dynamic> lastMessageInfoMap = {
+          "lastMessage": message,
+          "lastMessageTs": formattedDate,
+          "time": FieldValue.serverTimestamp(),
+          "lastMessageSendBy": myUserName,
+        };
+
+        DatabaseMethods().updateLastMessageSend(chatRoomId!, lastMessageInfoMap);
+        if(sendClicked){
+          messageId=null;
+        }
+      });
     }
   }
 
@@ -178,14 +199,19 @@ class _ChatPageState extends State<ChatPage> {
                                     TextStyle(color: Colors.black45)),
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                  color: Color(0xFFf3f3f3),
-                                  borderRadius: BorderRadius.circular(40)),
-                              child: Center(
-                                child: Icon(Icons.send,
-                                    color: Color.fromARGB(255, 122, 117, 117)),
+                            GestureDetector(
+                              onTap: (){
+                                addMessage(true);
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    color: Color(0xFFf3f3f3),
+                                    borderRadius: BorderRadius.circular(40)),
+                                child: Center(
+                                  child: Icon(Icons.send,
+                                      color: Color.fromARGB(255, 122, 117, 117)),
+                                ),
                               ),
                             )
                           ],
