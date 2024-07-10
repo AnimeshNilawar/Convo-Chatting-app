@@ -1,4 +1,5 @@
 import 'package:conversation/Pages/chatpage.dart';
+import 'package:conversation/Pages/forgotPassword.dart';
 import 'package:conversation/Pages/home.dart';
 import 'package:conversation/Pages/signin.dart';
 import 'package:conversation/Pages/signup.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
         useMaterial3: true,
       ),
-      home: SignIn(),
+      home: Signup(),
     );
   }
 }

@@ -1,13 +1,68 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conversation/service/shared_pref.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:random_string/random_string.dart';
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key});
+  String name, profileurl, username;
+
+  ChatPage(
+      {required this.name, required this.username, required this.profileurl});
 
   @override
   State<ChatPage> createState() => _ChatPageState();
 }
 
 class _ChatPageState extends State<ChatPage> {
+  TextEditingController messageController = new TextEditingController();
+  String? myName, myProfilePic, myUserName, myEmail, messageId;
+
+  getTheSharedPref() async {
+    myName = await SharedPreferenceHelper().getUserDisplayName();
+    myProfilePic = await SharedPreferenceHelper().getUserPic();
+    myUserName = await SharedPreferenceHelper().getUserName();
+    myEmail = await SharedPreferenceHelper().getUserEmail();
+
+    setState(() {
+
+    });
+  }
+
+  onTheLoad() async {
+    await getTheSharedPref();
+    setState(() {
+
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    onTheLoad();
+  }
+
+
+  addMessage(bool sendClicked) {
+    if (messageController.text != "") {
+      String message = messageController.text;
+      messageController.text = "";
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('h:mma').format(now);
+      Map<String, dynamic>messageInfoMap = {
+        "message": message,
+        "sendBy": myUserName,
+        "ts": formattedDate, //time stamp
+        "time": FieldValue.serverTimestamp(),
+        "imgUrl": myProfilePic,
+      };
+      if(messageId == ""){
+        messageId = randomAlphaNumeric(10);
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +95,10 @@ class _ChatPageState extends State<ChatPage> {
               child: Container(
                 padding: EdgeInsets.only(
                     left: 20.0, right: 20.0, top: 40.0, bottom: 30.0),
-                width: MediaQuery.of(context).size.width,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
@@ -55,7 +113,10 @@ class _ChatPageState extends State<ChatPage> {
                             Container(
                               padding: EdgeInsets.all(15),
                               margin: EdgeInsets.only(
-                                  left: MediaQuery.of(context).size.width / 2),
+                                  left: MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width / 2),
                               alignment: Alignment.bottomRight,
                               decoration: BoxDecoration(
                                 color: Color(0xfff3f3f3),
@@ -75,7 +136,10 @@ class _ChatPageState extends State<ChatPage> {
                               padding: EdgeInsets.all(15),
                               margin: EdgeInsets.only(
                                   right:
-                                      MediaQuery.of(context).size.width / 2.5),
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width / 2.5),
                               alignment: Alignment.bottomRight,
                               decoration: BoxDecoration(
                                 color: Color(0xffd6eefa),
@@ -106,11 +170,12 @@ class _ChatPageState extends State<ChatPage> {
                           children: [
                             Expanded(
                               child: TextField(
+                                controller: messageController,
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Enter a message",
                                     hintStyle:
-                                        TextStyle(color: Colors.black45)),
+                                    TextStyle(color: Colors.black45)),
                               ),
                             ),
                             Container(

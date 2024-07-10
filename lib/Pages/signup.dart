@@ -29,11 +29,15 @@ class _Signup extends State<Signup> {
             .createUserWithEmailAndPassword(email: email, password: password);
 
         String Id = randomAlphaNumeric(10);
+        String user = mailController.text.replaceAll("@gmail.com", "");
+        String updatedUserName = user.replaceFirst(user[0], user[0].toUpperCase());
+        String firstLetter = user.substring(0,1).toUpperCase();
 
         Map<String, dynamic>userInfoMap = {
           "Name": nameController.text,
           "E-mail": mailController.text,
-          "Username": mailController.text.replaceAll("@gmail.com", ""),
+          "Username": updatedUserName.toUpperCase(),
+          "SearchKey": firstLetter,
           "Photo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/640px-User_icon_2.svg.png",
           "Id": Id,
 
