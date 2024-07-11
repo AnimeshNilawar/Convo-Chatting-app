@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:conversation/service/shared_pref.dart';
 
 class DatabaseMethods {
   Future addUserDetails(Map<String, dynamic> userInfoMap, String id) async {
@@ -62,6 +63,22 @@ class DatabaseMethods {
         .doc(chatRoomId)
         .collection("chats")
         .orderBy("time", descending: true)
+        .snapshots();
+  }
+
+  Future<QuerySnapshot> getUserInfo(String Username) async {
+    return await FirebaseFirestore.instance
+        .collection("users")
+        .where("Username", isEqualTo: Username)
+        .get();
+  }
+
+  Future<Stream<QuerySnapshot>> getChatRooms() async {
+    String? myUsername = await SharedPreferenceHelper().getUserName();
+    return FirebaseFirestore.instance
+        .collection("chatrooms")
+        .orderBy("time", descending: true)
+        .where("users", arrayContains: myUsername!)
         .snapshots();
   }
 }

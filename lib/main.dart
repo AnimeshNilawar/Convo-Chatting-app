@@ -3,6 +3,7 @@ import 'package:conversation/Pages/forgotPassword.dart';
 import 'package:conversation/Pages/home.dart';
 import 'package:conversation/Pages/signin.dart';
 import 'package:conversation/Pages/signup.dart';
+import 'package:conversation/service/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.pink),
         useMaterial3: true,
       ),
-      home: SignIn(),
+      home: FutureBuilder(
+          future: AuthMethods().getCurrentUser(),
+          builder: (context, AsyncSnapshot<dynamic> snapshot){
+        if(snapshot.hasData){
+          return Home();
+        }else{
+          return Signup();
+        }
+      }),
     );
   }
 }

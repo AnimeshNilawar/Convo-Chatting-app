@@ -64,11 +64,9 @@ class _ChatPageState extends State<ChatPage> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(24),
-                bottomRight:
-                    sendBy ? Radius.circular(0) : Radius.circular(24),
+                bottomRight: sendBy ? Radius.circular(0) : Radius.circular(24),
                 topRight: Radius.circular(24),
-                bottomLeft:
-                    sendBy ? Radius.circular(24) : Radius.circular(0)),
+                bottomLeft: sendBy ? Radius.circular(24) : Radius.circular(0)),
             color: sendBy ? Color(0xfff3f3f3) : Color(0xffd6eefa),
           ),
           child: Text(
@@ -171,7 +169,7 @@ class _ChatPageState extends State<ChatPage> {
                       color: Color(0xFFc199cd),
                     ),
                   ),
-                  SizedBox(width: 150.0),
+                  Spacer(),
                   Text(
                     widget.name,
                     style: TextStyle(
@@ -179,6 +177,7 @@ class _ChatPageState extends State<ChatPage> {
                         fontSize: 25.0,
                         fontWeight: FontWeight.w500),
                   ),
+                  Spacer(),
                 ],
               ),
             ),
@@ -201,7 +200,7 @@ class _ChatPageState extends State<ChatPage> {
                         hintText: "Enter a message",
                         hintStyle: TextStyle(color: Colors.black45),
                         suffixIcon: GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               addMessage(true);
                             },
                             child: Icon(Icons.send_rounded))),
