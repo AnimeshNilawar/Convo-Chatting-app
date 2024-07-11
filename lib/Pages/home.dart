@@ -14,6 +14,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool search = false;
   String? myName, myProfilePic, myUserName, myEmail;
+  Stream? chatRoomStream;
 
   getTheSharedPref() async{
     myName = await SharedPreferenceHelper().getUserDisplayName();
