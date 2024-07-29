@@ -23,7 +23,7 @@ class _Signup extends State<Signup> {
 
   final _formkey = GlobalKey<FormState>();
 
-  registration() async {
+    registration() async {
     if (password != null && password == confirmPassword) {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
